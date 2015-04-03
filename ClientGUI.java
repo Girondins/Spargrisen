@@ -1,3 +1,5 @@
+package Spargrisen;
+
 import java.awt.TextArea;
 import java.awt.event.ActionEvent;
 

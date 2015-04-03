@@ -1,3 +1,4 @@
+package Spargrisen;
 
 
 
@@ -23,6 +24,7 @@ public class Server {
 	public void run() {
 		try {
 			serverSocket = new ServerSocket(port);
+			System.out.println("Server Online");
 			while (true) {
 				Socket socket = serverSocket.accept();
 				new ClientHandler(socket).start();
