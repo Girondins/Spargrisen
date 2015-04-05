@@ -24,7 +24,7 @@ public class CategoryList implements Serializable {
 
 	public synchronized void removeCategory(String categoryName){
 		for(int i=0; i<categoryList.size(); i++){
-			if(categoryName==categoryList.get(i).getCategoryName())){
+			if(categoryName==categoryList.get(i).getCategoryName()){
 				categoryList.remove(i);
 			}
 		}
