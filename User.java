@@ -15,6 +15,7 @@ public class User implements Serializable{
 	public User(String userName, String passWord) {
 		this.userName = userName;
 		this.passWord = passWord;
+		this.categoryList = new CategoryList();
 
 	}
 
