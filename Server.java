@@ -8,24 +8,30 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Calendar;
 
+
+
 public class Server {
 
 	private ServerSocket serverSocket;
-	private int port;
 	private ArrayList<User> userList;
+	private ArrayList<ClientHandler> alch;
+	private ClientHandler clientHandler;
 
-	public Server(int port) {
-		this.port = port;
+	public Server(int port) throws IOException {
+		this.serverSocket = new ServerSocket(port);
+		alch = new ArrayList<ClientHandler>();
 
 	}
 
 	public void run() {
+		System.out.println("Server Online");
 		try {
-			serverSocket = new ServerSocket(port);
-			System.out.println("Server Online");
 			while (true) {
 				Socket socket = serverSocket.accept();
-				new ClientHandler(socket).start();
+				ClientHandler ch = new ClientHandler(socket);
+				this.clientHandler = ch;
+				alch.add(ch);
+				ch.start();
 			}
 		} catch (IOException e) {
 			System.out.println(e);
@@ -56,7 +62,8 @@ public class Server {
 						User user = (User) object;
 						if (doesUserExist(user) == false) {
 							registerUser(user);
-						}
+						} else
+							getUserHistory(user);
 					}
 				}
 			} catch (Exception e) {
@@ -78,22 +85,29 @@ public class Server {
 		}
 
 		public void registerUser(User user) throws IOException {
+			user.setID(clientHandler.getId());
 			userList.add(user);
-			String response = "Welcome: " + user.getName() + "\n" + "You have now been registred!";
+			String response = "Welcome: " + user.getName() + "\n"
+					+ "You have now been registred!";
 			oos.writeObject(response);
+			oos.flush();
+			oos.writeObject(user);
 			oos.flush();
 		}
 
-		public void getUserHistory() {
-			// return user history
-
+		public void getUserHistory(User user) throws IOException {
+			User historyUser = null;
+			for (int i = 0; i < userList.size(); i++) {
+				if (userList.get(i).getName().equals(user.getName())) {
+					historyUser = userList.get(i);
+				}
+			}
+			oos.writeObject(historyUser);
+			oos.flush();
 		}
 
 	}
 
-	public void sendMessage(String message) {
-
-	}
 
 	public String getTime() {
 		String time;
@@ -110,7 +124,7 @@ public class Server {
 		return time;
 	}
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		Server s = new Server(1515);
 		s.run();
 	}
