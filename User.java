@@ -35,11 +35,11 @@ public class User implements Serializable{
 		return passWord;
 	}
 
-	public void setCategory(CategoryList categoryList) {
+	public void setCategoryList(CategoryList categoryList) {
 		this.categoryList = categoryList;
 	}
 
-	public CategoryList getCategory() {
+	public CategoryList getCategoryList() {
 		return categoryList;
 	}
 

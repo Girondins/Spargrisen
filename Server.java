@@ -1,5 +1,6 @@
 package Spargrisen;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -7,8 +8,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Calendar;
-
-
+import java.util.LinkedList;
 
 public class Server {
 
@@ -16,8 +16,14 @@ public class Server {
 	private ArrayList<User> userList;
 	private ArrayList<ClientHandler> alch;
 	private ClientHandler clientHandler;
+	private ObjectInputStream bankOis;
+	private Socket bankSocket;
+	private LinkedList<String> transactionList;
 
-	public Server(int port) throws IOException {
+	public Server(int port, String IP, int bankPort) throws IOException {
+		bankSocket = new Socket(IP, bankPort);
+		bankOis = new ObjectInputStream(new BufferedInputStream(
+				bankSocket.getInputStream()));
 		this.serverSocket = new ServerSocket(port);
 		alch = new ArrayList<ClientHandler>();
 
@@ -57,7 +63,10 @@ public class Server {
 			try {
 				while (true) {
 					object = ois.readObject();
-
+					String transaction = bankOis.readUTF();
+					transactionList.add(transaction);
+					handleTransaction();
+					
 					if (object instanceof User) {
 						User user = (User) object;
 						if (doesUserExist(user) == false) {
@@ -69,6 +78,29 @@ public class Server {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
+		}
+		
+		public void handleTransaction(){
+			User user = null;
+			String read = transactionList.pop();
+			String[] parts = read.split(",");
+			String purchaseInfo = parts[1] + parts[2] + parts[3] + parts[4];
+			
+			for(int i=0; i<userList.size(); i++){
+				if(parts[0].equals(userList.get(i).getName())){
+					user = userList.get(i);
+				}
+			}
+			
+			for(int i=0; i<user.getCategoryList().size(); i++){
+				if(user.getCategoryList().getCategoryIndex(i).checkTags(parts[3])){
+					user.getCategoryList().getCategoryIndex(i).addPurchase(purchaseInfo);
+				}else{
+					user.getCategoryList().getCategoryIndex(user.getCategoryList().size()).addPurchase(purchaseInfo);
+				}
+				
+			}
+			
 		}
 
 		public boolean doesUserExist(User user) throws IOException {
@@ -108,7 +140,6 @@ public class Server {
 
 	}
 
-
 	public String getTime() {
 		String time;
 		Calendar cal = Calendar.getInstance();
@@ -125,7 +156,7 @@ public class Server {
 	}
 
 	public static void main(String[] args) throws IOException {
-		Server s = new Server(1515);
+		Server s = new Server(1515, "127.0.0.1", 4545);
 		s.run();
 	}
 

@@ -23,19 +23,19 @@ public class Bank implements Runnable {
 		try {
 			while (true) {
 				Socket socket = serverSocket.accept();
-				ClientHandler ch = new ClientHandler(socket);
+				BankHandler ch = new BankHandler(socket);
 				ch.start();
 			}
 		} catch (IOException e) {
 		}
 	}
 
-	private class ClientHandler extends Thread {
+	private class BankHandler extends Thread {
 		private ObjectInputStream ois;
 		private ObjectOutputStream oos;
 		private int count = -1;
 
-		public ClientHandler(Socket socket) {
+		public BankHandler(Socket socket) {
 			try {
 				ois = new ObjectInputStream(socket.getInputStream());
 				oos = new ObjectOutputStream(socket.getOutputStream());

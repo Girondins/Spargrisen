@@ -65,6 +65,13 @@ public class Category implements Serializable{
 	public void addTag(String tag){
 		tagList.add(tag);
 	}
+	
+	public boolean checkTags(String tag){
+		if(tagList.contains(tag)){
+			return true;
+		}
+		else return false;
+	}
 		
 
 }

@@ -19,6 +19,9 @@ public class CategoryList implements Serializable {
 		categoryList.add(other);
 
 	}
+	public Category getCategoryIndex(int i){
+		return categoryList.get(i);
+	}
 
 	public synchronized Category getCategory() {
 		if (count == categoryList.size()) {
