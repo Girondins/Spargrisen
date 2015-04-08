@@ -21,6 +21,9 @@ public class Client {
 		ois = new ObjectInputStream(new BufferedInputStream(socket.getInputStream()));
 	}
 	
+	
+	
+	
 	public void setClientController(ClientController clientController){
 		this.clientController=clientController;
 		
