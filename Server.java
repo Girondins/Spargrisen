@@ -14,7 +14,7 @@ public class Server {
 
 	private ServerSocket serverSocket;
 	private ArrayList<User> userList;
-	private ArrayList<ClientHandler> alch;
+	private ArrayList<ClientHandler> clientList;
 	private ClientHandler clientHandler;
 	private ObjectInputStream bankOis;
 	private Socket bankSocket;
@@ -25,7 +25,7 @@ public class Server {
 		bankOis = new ObjectInputStream(new BufferedInputStream(
 				bankSocket.getInputStream()));
 		this.serverSocket = new ServerSocket(port);
-		alch = new ArrayList<ClientHandler>();
+		clientList = new ArrayList<ClientHandler>();
 
 	}
 
@@ -36,7 +36,7 @@ public class Server {
 				Socket socket = serverSocket.accept();
 				ClientHandler ch = new ClientHandler(socket);
 				this.clientHandler = ch;
-				alch.add(ch);
+				clientList.add(ch);
 				ch.start();
 			}
 		} catch (IOException e) {
@@ -66,9 +66,10 @@ public class Server {
 					String transaction = bankOis.readUTF();
 					transactionList.add(transaction);
 					handleTransaction();
-					
+
 					if (object instanceof User) {
 						User user = (User) object;
+						user.setID(clientHandler.getId());
 						if (doesUserExist(user) == false) {
 							registerUser(user);
 						} else
@@ -79,36 +80,53 @@ public class Server {
 				e.printStackTrace();
 			}
 		}
-		
-		public void handleTransaction(){
+
+		public void handleTransaction() throws IOException {
 			User user = null;
 			String read = transactionList.pop();
 			String[] parts = read.split(",");
 			String purchaseInfo = parts[1] + parts[2] + parts[3] + parts[4];
-			
-			for(int i=0; i<userList.size(); i++){
-				if(parts[0].equals(userList.get(i).getName())){
+
+			for (int i = 0; i < userList.size(); i++) {
+				if (parts[0].equals(userList.get(i).getName())) {
 					user = userList.get(i);
 				}
 			}
-			
-			for(int i=0; i<user.getCategoryList().size(); i++){
-				if(user.getCategoryList().getCategoryIndex(i).checkTags(parts[3])){
-					user.getCategoryList().getCategoryIndex(i).addPurchase(purchaseInfo);
-				}else{
-					user.getCategoryList().getCategoryIndex(user.getCategoryList().size()).addPurchase(purchaseInfo);
+
+			for (int i = 0; i < user.getCategoryList().size(); i++) {
+				if (user.getCategoryList().getCategoryIndex(i)
+						.checkTags(parts[3])) {
+					user.getCategoryList().getCategoryIndex(i)
+							.addPurchase(purchaseInfo);
+				} else {
+					user.getCategoryList()
+							.getCategoryIndex(user.getCategoryList().size())
+							.addPurchase(purchaseInfo);
 				}
-				
+
 			}
-			
+			for (int i = 0; i < clientList.size(); i++) {
+				if (user.getID() == clientList.get(i).getId()) {
+					ClientHandler ch = clientList.get(i);
+					ch.oos.writeObject(user);
+					ch.oos.flush();
+				}
+			}
+
 		}
 
 		public boolean doesUserExist(User user) throws IOException {
 			for (int i = 0; i < userList.size(); i++) {
 				if (userList.get(i).getName().equals(user.getName())) {
 					String response = "Username is Already Taken";
-					oos.writeObject(response);
-					oos.flush();
+
+					for (int j = 0; j < clientList.size(); j++) {
+						if (user.getID() == clientList.get(i).getId()) {
+							ClientHandler ch = clientList.get(i);
+							ch.oos.writeObject(response);
+							ch.oos.flush();
+						}
+					}
 					return true;
 				}
 			}
@@ -117,14 +135,19 @@ public class Server {
 		}
 
 		public void registerUser(User user) throws IOException {
-			user.setID(clientHandler.getId());
 			userList.add(user);
 			String response = "Welcome: " + user.getName() + "\n"
 					+ "You have now been registred!";
-			oos.writeObject(response);
-			oos.flush();
-			oos.writeObject(user);
-			oos.flush();
+
+			for (int i = 0; i < clientList.size(); i++) {
+				if (user.getID() == clientList.get(i).getId()) {
+					ClientHandler ch = clientList.get(i);
+					ch.oos.writeObject(response);
+					ch.oos.flush();
+					ch.oos.writeObject(user);
+					ch.oos.flush();
+				}
+			}
 		}
 
 		public void getUserHistory(User user) throws IOException {
@@ -134,8 +157,13 @@ public class Server {
 					historyUser = userList.get(i);
 				}
 			}
-			oos.writeObject(historyUser);
-			oos.flush();
+			for (int i = 0; i < clientList.size(); i++) {
+				if (user.getID() == clientList.get(i).getId()) {
+					ClientHandler ch = clientList.get(i);
+					ch.oos.writeObject(historyUser);
+					ch.oos.flush();
+				}
+			}
 		}
 
 	}
