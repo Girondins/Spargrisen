@@ -1,85 +1,86 @@
 package Spargrisen;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
-import java.io.File;
-import java.io.IOException;
+import java.util.LinkedList;
 
-import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 
+
+
 public class CategoryGUI extends JFrame {
-	private String total = "2300kr \n";
+	
+	private float totalSum;
+	private LinkedList<JPanel> panelList = new LinkedList<JPanel>();
+	private JPanel mainPanel;
+	private LinkedList<JLabel>lblList = new LinkedList<JLabel>();
+	private LinkedList<JSlider>sliderList = new LinkedList<JSlider>();
 
-	private JSlider foodSlider = new JSlider(JSlider.HORIZONTAL, 0, 20, 0);
-	private JSlider rentSlider = new JSlider(JSlider.HORIZONTAL, 0, 20, 0);;
-	private JSlider carSlider = new JSlider(JSlider.HORIZONTAL, 0, 20, 0);;
-	private JSlider nöjeSlider = new JSlider(JSlider.HORIZONTAL, 0, 20, 0);;
-	private JSlider gameSlider = new JSlider(JSlider.HORIZONTAL, 0, 20, 0);;
-	private JSlider movieSlider = new JSlider(JSlider.HORIZONTAL, 0, 20, 0);;
-	private JSlider booksSlider = new JSlider(JSlider.HORIZONTAL, 0, 20, 0);;
 
-	private JLabel TOTlbl = new JLabel("Totalt: ");
-	private JLabel moneyLbl = new JLabel(total);
+	public CategoryGUI(CategoryList catList) {
 
-	private JLabel foodlbl = new JLabel("MAT");
-	private JLabel rentlbl = new JLabel("Hyra");
-	private JLabel carlbl = new JLabel("Bil");
-	private JLabel nˆjelbl = new JLabel("Nˆje");
-	private JLabel gamelbl = new JLabel("Spel");
-	private JLabel movielbl = new JLabel("Film");
-	private JLabel bookslbl = new JLabel("Bˆcker");
-
-	public CategoryGUI() {
+		createCategory(catList);
 		
-		JPanel p = new JPanel();
-		JPanel total = new JPanel();
-
-		total.setLayout(new GridLayout(1, 2));
-		p.setLayout(new GridLayout(15, 1));
-
-		foodSlider.setMajorTickSpacing(3);
-		foodSlider.setPaintLabels(true);
 		
-		rentSlider.setMajorTickSpacing(3);
-		rentSlider.setPaintLabels(true);
-		carSlider.setMajorTickSpacing(3);
-		carSlider.setPaintLabels(true);
-		nöjeSlider.setMajorTickSpacing(3);
-		nöjeSlider.setPaintLabels(true);
-		gameSlider.setMajorTickSpacing(3);
-		gameSlider.setPaintLabels(true);
-		movieSlider.setMajorTickSpacing(3);
-		movieSlider.setPaintLabels(true);
+	}
+	public void createCategory(CategoryList cat) {
+		int sum=0;
+		for(int i = 0; i <cat.size(); i++){
+				Category cate;
+				cate = cat.getCategory();
+				
+				sum = Math.round(cate.getCurrentSum());
+				this.totalSum += cate.getCurrentSum();
+				JPanel CategorySlider = new JPanel(new GridLayout(1,2));
+				
+				JLabel lblName = new JLabel(cate.getCategoryName());
+				JSlider slider = new JSlider(JSlider.HORIZONTAL,0,cate.getBudgetLimit(),sum);
+				slider.setMajorTickSpacing(cate.getBudgetLimit());
+				slider.setPaintLabels(true);
+				slider.setPaintTicks(true);
+				slider.setBackground(Color.RED);
+				slider.setPreferredSize(new Dimension(200,20));
+				
+//				CategorySlider.add(lblName);
+//				CategorySlider.add(slider);
+				
+//				this.panelList.add(CategorySlider);
+				sliderList.add(slider);
+				lblList.add(lblName);
+				
+		}
+//		createGUI(this.panelList, totalSum);
+		createGUI(sliderList,lblList,totalSum);
 		
-
-		total.add(TOTlbl);
-		total.add(moneyLbl);
-		p.add(total);
-		p.add(foodlbl);
-		p.add(foodSlider);
-		p.add(rentlbl);
-		p.add(rentSlider);
-		p.add(carlbl);
-		p.add(carSlider);
-		p.add(nˆjelbl);
-		p.add(nöjeSlider);
-		p.add(gamelbl);
-		p.add(gameSlider);
-		p.add(movielbl);
-		p.add(movieSlider);
-		p.setVisible(true);
-		startFrame(p);
-
+	}
+	
+	private void createGUI(LinkedList<JSlider> sliderList, LinkedList<JLabel> lblList, float totalSum) {
+		String totSumString = Float.toString(totalSum);
+		
+		JPanel mainPanel = new JPanel(new GridLayout(sliderList.size()+lblList.size()+1,1));
+		JLabel totalPanel = new JLabel("Current Sum:                              " + totSumString);
+//		totalPanel.setName("Current Sum: " + totSumString);
+		mainPanel.add(totalPanel);
+		
+		
+		while(!lblList.isEmpty()) {
+			
+			
+			mainPanel.add(lblList.pop());
+			mainPanel.add(sliderList.pop());
+		}
+		
+		startFrame(mainPanel);
+		
 	}
 
-	public void startFrame(JPanel p) {
+	public void startFrame(JPanel mainPanel) {
 		JFrame frame = new JFrame("BUDGET APPLIKATION");
-		frame.add(p);
+		frame.add(mainPanel);
 		frame.setLocationRelativeTo(null);
 		frame.setPreferredSize(new Dimension(300,416)); // galaxy S4 screen size
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -88,12 +89,55 @@ public class CategoryGUI extends JFrame {
 	}
 
 	public static void main(String[] args) {
-		new CategoryGUI();
+		Category cat = new Category("Mat", 2000, new LinkedList());
+		cat.addPurchase("Korv,Cost: 100,Lidl,söndag");
+		new CategoryGUI(new CategoryList());
 	}
 
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // frame.setExtendedState(JFrame.MAXIMIZED_BOTH); / olika mobiler olika sk‰rmar
 // gˆr framen lika stor som displayen
 // frame.setResizable(false);
- 
+
+
+
+
+
+
+
+
+
+
+
+
+
