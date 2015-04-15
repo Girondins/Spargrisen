@@ -38,7 +38,7 @@ public class Category implements Serializable{
 	public void setCurrentSum(){
 		String[] parts = null;
 		for(int i=0; i<purchaseList.size(); i++){
-			parts = purchaseList.get(i).split(",");
+			parts = purchaseList.get(i).split(";");
 		}
 		for(int j=0; j<parts.length; j++){
 			if(parts[j].contains("Cost: ")){

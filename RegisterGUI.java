@@ -3,6 +3,10 @@ package Spargrisen;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.*;
 
 import javax.swing.*;
@@ -19,8 +23,11 @@ public class RegisterGUI extends JPanel implements ActionListener {
 	private JTextField placeTF = new JTextField("");
 	private JButton makePurchase = new JButton("Make Purchase: ");
 	private Font font = new Font("SansSerif", Font.BOLD, 14);
+	private Socket socket;
+	private ObjectOutputStream oos;
 
 	public RegisterGUI() {
+//		socket = new Socket(ip,port);
 		setPreferredSize(new Dimension(600, 200));
 		titel.setFont(font);
 		userL.setFont(font);
@@ -64,7 +71,7 @@ public class RegisterGUI extends JPanel implements ActionListener {
 
 	public String sendResponse() {
 		String res = getUser() + ";" + getPurchase() + ";"
-				+ getCost() + ";" + getPurchase() + ";" + getDate() + ";" + getTime();
+				+ getCost() + ";" + getPurchase() + ";" + "[" +  getDate() + " (" + getTime() + ")" + "]";
 		System.out.println(res);
 		return res;
 	}
