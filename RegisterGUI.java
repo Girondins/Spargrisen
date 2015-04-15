@@ -3,6 +3,7 @@ package Spargrisen;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
@@ -26,8 +27,9 @@ public class RegisterGUI extends JPanel implements ActionListener {
 	private Socket socket;
 	private ObjectOutputStream oos;
 
-	public RegisterGUI() {
-//		socket = new Socket(ip,port);
+	public RegisterGUI(String ip, int port) throws UnknownHostException, IOException {
+		socket = new Socket(ip,port);
+		oos = new ObjectOutputStream(new BufferedOutputStream(socket.getOutputStream()));
 		setPreferredSize(new Dimension(600, 200));
 		titel.setFont(font);
 		userL.setFont(font);
@@ -119,10 +121,10 @@ public class RegisterGUI extends JPanel implements ActionListener {
 		return date;
 	}
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws UnknownHostException, IOException {
 		JFrame frame = new JFrame("KassaGUI");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.add(new RegisterGUI());
+		frame.add(new RegisterGUI("127.0.0.1",3001));
 		frame.pack();
 		frame.setVisible(true);
 
