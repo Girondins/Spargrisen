@@ -9,9 +9,9 @@ public class Category implements Serializable{
 	private String categoryName;
 	private int budgetLimit;
 	private float currentSum;
-	private ArrayList<String> purchaseList;
-	private LinkedList<String> tagList;
-	private ArrayList<Float> sumList;
+	private ArrayList<String> purchaseList = new ArrayList<String>();
+	private LinkedList<String> tagList = new LinkedList<String>();
+	private ArrayList<Float> sumList = new ArrayList <Float>();
 	
 	public Category(String categoryName, int budgetLimit, LinkedList<String> tagList){
 		this.categoryName = categoryName;
@@ -42,20 +42,21 @@ public class Category implements Serializable{
 		}
 		for(int j=0; j<parts.length; j++){
 			if(parts[j].contains("Cost: ")){
-				parts[j].substring(6,parts[j].length());
-			sumList.add(Float.parseFloat(parts[j]));
+				String cost = parts[j].substring(6,parts[j].length());
+			sumList.add(Float.parseFloat(cost));
 		}}
 	}
 	
 	public float getCurrentSum(){
 		for(int i=0 ; i<sumList.size(); i++){
-			currentSum =+ sumList.get(i);
+			currentSum += sumList.get(i);
 		}
 		return currentSum;
 	}
 	
 	public void addPurchase(String purchase){
 		purchaseList.add(purchase);
+		setCurrentSum();
 	}
 	
 	public ArrayList<String> getPurchaseList(){

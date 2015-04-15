@@ -1,4 +1,4 @@
-package SparGrisen;
+package Spargrisen;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -63,10 +63,25 @@ public class RegisterGUI extends JPanel implements ActionListener {
 	}
 
 	public String sendResponse() {
-		String res = userTF.getText() + ";" + purchaseTF.getText() + ";"
-				+ costTF.getText() + ";" + placeTF.getText() + ";" + getDate() + ";" + getTime();
+		String res = getUser() + ";" + getPurchase() + ";"
+				+ getCost() + ";" + getPurchase() + ";" + getDate() + ";" + getTime();
 		System.out.println(res);
 		return res;
+	}
+	public String getUser(){
+		return "User: " + userTF.getText();
+	}
+	
+	public String getPurchase(){
+		return "Purchase: " + purchaseTF.getText();
+	}
+	
+	public String getCost(){
+		return "Cost: " + costTF.getText();
+	}
+	
+	public String getPlace(){
+		return "Place: " + placeTF.getText();
 	}
 
 	public String getTime() {

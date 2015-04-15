@@ -7,7 +7,7 @@ import java.util.LinkedList;
 public class CategoryList implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-	private ArrayList<Category> categoryList;
+	private ArrayList<Category> categoryList = new ArrayList<Category>();
 	private int count = -1;
 	private final Category other = new Category("Other", 0, new LinkedList<String>());;
 

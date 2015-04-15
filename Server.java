@@ -1,191 +1,122 @@
 package Spargrisen;
 
-import java.io.BufferedInputStream;
+
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.LinkedList;
 
-public class Server {
+/**
+ * Klassen är en "Chat Server" som kan lagra och skicka ut meddelande till anslutna klienter
+ * @author Stefan Tran
+ *
+ */
 
+public class Server implements Runnable {
+	/**
+	 * Nödvändinga instansvariabler deklareras
+	 */
 	private ServerSocket serverSocket;
-	private ArrayList<User> userList;
-	private ArrayList<ClientHandler> clientList;
+	private Thread server = new Thread(this);
+	private ArrayList<ClientHandler> alch;
+	private User user;
 	private ClientHandler clientHandler;
-	private ObjectInputStream bankOis;
-	private Socket bankSocket;
-	private LinkedList<String> transactionList;
 
-	public Server(int port, String IP, int bankPort) throws IOException {
-		bankSocket = new Socket(IP, bankPort);
-		bankOis = new ObjectInputStream(new BufferedInputStream(
-				bankSocket.getInputStream()));
+
+	public Server(int port) throws IOException {
 		this.serverSocket = new ServerSocket(port);
-		clientList = new ArrayList<ClientHandler>();
-
+		alch = new ArrayList<ClientHandler>();
+		server.start();
 	}
 
 	public void run() {
 		System.out.println("Server Online");
-		try {
-			while (true) {
+		while (true) {
+			try {
 				Socket socket = serverSocket.accept();
 				ClientHandler ch = new ClientHandler(socket);
 				this.clientHandler = ch;
-				clientList.add(ch);
+				alch.add(ch);
 				ch.start();
-			}
-		} catch (IOException e) {
-			System.out.println(e);
-		}
-	}
-
-	private class ClientHandler extends Thread {
-		private ObjectInputStream ois;
-		private ObjectOutputStream oos;
-
-		public ClientHandler(Socket socket) {
-			try {
-				ois = new ObjectInputStream(socket.getInputStream());
-				oos = new ObjectOutputStream(socket.getOutputStream());
 			} catch (IOException e) {
-				e.printStackTrace();
+				System.err.println(e);
 			}
 		}
 
+	}
+/**
+ * En inre klass som kan hantera de olika klienter som kopplar in sig till servern
+ * @author Girondins
+ *
+ */
+	private class ClientHandler extends Thread {
+		private Socket socket;
+		private ObjectOutputStream oos;
+		private ObjectInputStream ois;
+/**
+ * Konstruktor som tar emot rätt socket från klient
+ * @param socket från ansluten klient
+ * @throws IOException
+ */
+		public ClientHandler(Socket socket) throws IOException {
+			this.socket = socket;
+			oos = new ObjectOutputStream(socket.getOutputStream());
+			ois = new ObjectInputStream(socket.getInputStream());
+			System.out.println("HEJ");
+		}
+		
+/**
+ * Metod som startar hantering av inkommande och utgående object
+ * 
+ */
 		public void run() {
-			Object object;
+			Object object = null;
 
 			try {
 				while (true) {
-					object = ois.readObject();
-					String transaction = bankOis.readUTF();
-					transactionList.add(transaction);
-					handleTransaction();
 
+					try {
+						object = ois.readObject();
+					} catch (ClassNotFoundException e) {
+			
+						e.printStackTrace();
+					}
+					
 					if (object instanceof User) {
-						User user = (User) object;
+						user = (User) object;
 						user.setID(clientHandler.getId());
-						if (doesUserExist(user) == false) {
-							registerUser(user);
-						} else
-							getUserHistory(user);
+						
+						
+						
+						
+					}else {
+						System.out.println("GG");
 					}
 				}
-			} catch (Exception e) {
-				e.printStackTrace();
+			} catch (IOException e) {
+				System.err.println("fel");
 			}
-		}
-
-		public void handleTransaction() throws IOException {
-			User user = null;
-			String read = transactionList.pop();
-			String[] parts = read.split(",");
-			String purchaseInfo = parts[1] + parts[2] + parts[3] + parts[4];
-
-			for (int i = 0; i < userList.size(); i++) {
-				if (parts[0].equals(userList.get(i).getName())) {
-					user = userList.get(i);
+				try {
+					oos.close();
+					ois.close();
+					socket.close();
+				} catch (IOException e1) {
+					System.out.println("error");
 				}
-			}
-
-			for (int i = 0; i < user.getCategoryList().size(); i++) {
-				if (user.getCategoryList().getCategoryIndex(i)
-						.checkTags(parts[3])) {
-					user.getCategoryList().getCategoryIndex(i)
-							.addPurchase(purchaseInfo);
-				} else {
-					user.getCategoryList()
-							.getCategoryIndex(user.getCategoryList().size())
-							.addPurchase(purchaseInfo);
-				}
-
-			}
-			for (int i = 0; i < clientList.size(); i++) {
-				if (user.getID() == clientList.get(i).getId()) {
-					ClientHandler ch = clientList.get(i);
-					ch.oos.writeObject(user);
-					ch.oos.flush();
-				}
-			}
+						
+		
 
 		}
-
-		public boolean doesUserExist(User user) throws IOException {
-			for (int i = 0; i < userList.size(); i++) {
-				if (userList.get(i).getName().equals(user.getName())) {
-					String response = "Username is Already Taken";
-
-					for (int j = 0; j < clientList.size(); j++) {
-						if (user.getID() == clientList.get(i).getId()) {
-							ClientHandler ch = clientList.get(i);
-							ch.oos.writeObject(response);
-							ch.oos.flush();
-						}
-					}
-					return true;
-				}
-			}
-			return false;
-
-		}
-
-		public void registerUser(User user) throws IOException {
-			userList.add(user);
-			String response = "Welcome: " + user.getName() + "\n"
-					+ "You have now been registred!";
-
-			for (int i = 0; i < clientList.size(); i++) {
-				if (user.getID() == clientList.get(i).getId()) {
-					ClientHandler ch = clientList.get(i);
-					ch.oos.writeObject(response);
-					ch.oos.flush();
-					ch.oos.writeObject(user);
-					ch.oos.flush();
-				}
-			}
-		}
-
-		public void getUserHistory(User user) throws IOException {
-			User historyUser = null;
-			for (int i = 0; i < userList.size(); i++) {
-				if (userList.get(i).getName().equals(user.getName())) {
-					historyUser = userList.get(i);
-				}
-			}
-			for (int i = 0; i < clientList.size(); i++) {
-				if (user.getID() == clientList.get(i).getId()) {
-					ClientHandler ch = clientList.get(i);
-					ch.oos.writeObject(historyUser);
-					ch.oos.flush();
-				}
-			}
-		}
-
 	}
-
-	public String getTime() {
-		String time;
-		Calendar cal = Calendar.getInstance();
-		if (cal.get(Calendar.SECOND) < 10) {
-			time = "[" + cal.get(Calendar.HOUR_OF_DAY) + ":"
-					+ cal.get(Calendar.MINUTE) + ":0"
-					+ cal.get(Calendar.SECOND) + "]";
-		} else {
-			time = "[" + cal.get(Calendar.HOUR_OF_DAY) + ":"
-					+ cal.get(Calendar.MINUTE) + ":" + cal.get(Calendar.SECOND)
-					+ "]";
-		}
-		return time;
-	}
-
+		
+		
+		
+	
 	public static void main(String[] args) throws IOException {
-		Server s = new Server(1515, "127.0.0.1", 4545);
-		s.run();
-	}
+		new Server(3001);
 
+	}
 }
