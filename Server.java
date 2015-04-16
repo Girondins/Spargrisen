@@ -148,41 +148,53 @@ public class Server implements Runnable {
 
 		public void handleTransaction(String purchase) throws IOException {
 			String[] parts = purchase.split(";");
-			User user = null;
+			User newUser = null;
 			boolean tagExist = false;
+			String userName = parts[0].substring(6, parts[0].length());
 
 			for (int i = 0; i < userList.size(); i++) {
-				if (userList.get(i).getName().equals(parts[0])) {
-					user = userList.get(i);
+				if (userList.get(i).getName().equals(userName)) {
+					newUser = userList.get(i);
 				}
 
-				for (int j = 0; j < user.getCategoryList().size(); j++) {
-					if (user.getCategoryList().getCategoryIndex(j)
+				for (int j = 0; j < newUser.getCategoryList().size(); j++) {
+					if (newUser.getCategoryList().getCategoryIndex(j)
 							.checkTags(parts[3])) {
-						user.getCategoryList().getCategoryIndex(j)
+						newUser.getCategoryList().getCategoryIndex(j)
 								.addPurchase(purchase);
 						tagExist = true;
 					}
 				}
 				if (tagExist == false) {
-					user.getCategoryList()
+					newUser.getCategoryList()
 							.getCategoryIndex(
-									user.getCategoryList().size() - 1)
+									newUser.getCategoryList().size() - 1)
 							.addPurchase(purchase);
+					System.out.println("Här");
 				}
 				
-				userList.set(i, user);
-				sendUpdatedInfo(user);
+				userList.set(i, newUser);
+				user = newUser;
+				
 			}
-
+			sendUpdatedInfo(user);
 		}
 
 		public void sendUpdatedInfo(User user) throws IOException {
+//			
+//			oos.writeObject(user);
+//			oos.flush();
 			for (int i = 0; i < alch.size(); i++) {
 				if (alch.get(i).getId() == user.getID()) {
 					ClientHandler ch = alch.get(i);
+					ch.oos.writeObject("Nytt köp");
+					ch.oos.flush();
+					System.out.println(user.toString());
+					ch.oos.reset();
 					ch.oos.writeObject(user);
 					ch.oos.flush();
+					
+
 				}
 			}
 		}

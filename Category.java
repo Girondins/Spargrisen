@@ -5,7 +5,10 @@ import java.util.LinkedList;
 
 public class Category implements Serializable{
 
-	private static final long serialVersionUID = 1L;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -5728719704629685694L;
 	private String categoryName;
 	private int budgetLimit;
 	private float currentSum;
@@ -48,6 +51,7 @@ public class Category implements Serializable{
 	}
 	
 	public float getCurrentSum(){
+		currentSum=0;
 		for(int i=0 ; i<sumList.size(); i++){
 			currentSum += sumList.get(i);
 		}

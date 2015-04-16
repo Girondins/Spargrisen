@@ -9,10 +9,12 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.Observable;
+import java.util.Observer;
 
 import javax.swing.JOptionPane;
 
-public class Client{
+public class Client extends Observable{
 
 	
 	private ClientController clientController;
@@ -23,14 +25,11 @@ public class Client{
 
 	
 
-	public Client(String ip, int port, String name) throws UnknownHostException, IOException{
-			
+	public Client(String ip, int port, String name, RegisterGUI rg) throws UnknownHostException, IOException{
+			rg.addObserver(new ObserverImp());
 			socket = new Socket(ip,port);
-			System.out.println("e");
 			ois = new ObjectInputStream(new BufferedInputStream(socket.getInputStream()));
-			System.out.println("De");
 			oos = new ObjectOutputStream(new BufferedOutputStream(socket.getOutputStream()));
-			System.out.println("FUck");
 			user = new User(name); 
 			new ClientStarter().start();
 		}
@@ -47,11 +46,29 @@ public class Client{
 		try {
 			oos.writeObject(user);
 			oos.flush();
-			System.out.println("Fred");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
+	}
+	
+	public void makePurchase(String purchase){
+		try{
+			oos.writeObject(purchase);
+			oos.flush();
+		} catch (IOException e){
+			e.printStackTrace();
+		}
+	}
+	
+	private class ObserverImp implements Observer{
+
+		public void update(Observable o, Object arg) {
+			String purchase = (String)arg;
+			makePurchase(purchase);
+			
+		}
+		
 	}
 	
 
@@ -61,6 +78,7 @@ public class Client{
 			while (true) {
 				try {
 					object = ois.readObject();
+					System.out.println(object.toString());
 					clientController.newObject(object);
 
 				} catch (IOException | ClassNotFoundException ex) {

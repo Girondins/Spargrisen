@@ -12,7 +12,7 @@ import java.util.*;
 
 import javax.swing.*;
 
-public class RegisterGUI extends JPanel implements ActionListener {
+public class RegisterGUI extends Observable implements ActionListener {
 	private JLabel titel = new JLabel("Register");
 	private JLabel userL = new JLabel("User: ");
 	private JLabel purchaseL = new JLabel("Purchase: ");
@@ -24,13 +24,10 @@ public class RegisterGUI extends JPanel implements ActionListener {
 	private JTextField placeTF = new JTextField("");
 	private JButton makePurchase = new JButton("Make Purchase: ");
 	private Font font = new Font("SansSerif", Font.BOLD, 14);
-	private Socket socket;
-	private ObjectOutputStream oos;
+	private JPanel mainPanel = new JPanel();
 
-	public RegisterGUI(String ip, int port) throws UnknownHostException, IOException {
-		socket = new Socket(ip,port);
-		oos = new ObjectOutputStream(new BufferedOutputStream(socket.getOutputStream()));
-		setPreferredSize(new Dimension(600, 200));
+	public RegisterGUI() throws UnknownHostException, IOException {
+		mainPanel.setPreferredSize(new Dimension(600, 200));
 		titel.setFont(font);
 		userL.setFont(font);
 		purchaseL.setFont(font);
@@ -49,24 +46,25 @@ public class RegisterGUI extends JPanel implements ActionListener {
 		placeTF.setPreferredSize(new Dimension(290, 20));
 		makePurchase.setPreferredSize(new Dimension(290, 50));
 
-		add(titel, BorderLayout.CENTER);
-		add(userL, BorderLayout.WEST);
-		add(userTF, BorderLayout.EAST);
-		add(purchaseL, BorderLayout.WEST);
-		add(purchaseTF, BorderLayout.EAST);
-		add(costL, BorderLayout.WEST);
-		add(costTF, BorderLayout.EAST);
-		add(placeL, BorderLayout.WEST);
-		add(placeTF, BorderLayout.EAST);
-		add(makePurchase, BorderLayout.CENTER);
+		mainPanel.add(titel, BorderLayout.CENTER);
+		mainPanel.add(userL, BorderLayout.WEST);
+		mainPanel.add(userTF, BorderLayout.EAST);
+		mainPanel.add(purchaseL, BorderLayout.WEST);
+		mainPanel.add(purchaseTF, BorderLayout.EAST);
+		mainPanel.add(costL, BorderLayout.WEST);
+		mainPanel.add(costTF, BorderLayout.EAST);
+		mainPanel.add(placeL, BorderLayout.WEST);
+		mainPanel.add(placeTF, BorderLayout.EAST);
+		mainPanel.add(makePurchase, BorderLayout.CENTER);
 		makePurchase.addActionListener(this);
-
+		startFrame(mainPanel);
 	}
 
 	public void actionPerformed(ActionEvent e) {
 		
 		if (e.getSource() == makePurchase) {
-			sendResponse();
+			setChanged();
+			notifyObservers(sendResponse());
 		}
 
 	}
@@ -120,13 +118,13 @@ public class RegisterGUI extends JPanel implements ActionListener {
 		date = day + "/" + month + "/" + year;
 		return date;
 	}
-
-	public static void main(String[] args) throws UnknownHostException, IOException {
+	
+	public void startFrame(JPanel mainPanel){
 		JFrame frame = new JFrame("KassaGUI");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.add(new RegisterGUI("127.0.0.1",3001));
+		frame.add(mainPanel);
 		frame.pack();
 		frame.setVisible(true);
-
 	}
+
 }

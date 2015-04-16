@@ -12,6 +12,8 @@ public class ClientController{
 	
 	
 	private Client client;	
+	private CategoryGUI cg;
+
 	
 	public ClientController(Client client) throws IOException{
 		this.client = client;
@@ -20,26 +22,28 @@ public class ClientController{
 	}
 	
 	public void connect(){
+		this.cg = new CategoryGUI();
 		client.connect();
 	}
 	
 	
 	public void newObject(Object object){
 		if(object instanceof User) {
-			User user = (User) object;
-			extractUserInfo(user);
-		}else if(object instanceof String){
-			String message = (String)object;
-			showMessage(message);
-		}
+		User user = (User) object;
+		extractUserInfo(user);
+	}else if(object instanceof String){
+		String message = (String)object;
+		showMessage(message);
+	}
 		
 	}
 	public void extractUserInfo(User user) {
+
 		String name;
 		CategoryList catList;
 		name = extractUserName(user);
 		catList = extractCategoryList(user);
-//		new CategoryGUI(name,catList);
+		cg.createCategory(catList);
 		
 	}
 	
@@ -61,18 +65,9 @@ public class ClientController{
 	
 	
 	public static void main(String [] args) throws IOException{
-		String purchase = "Endi,Häst,Cost: 1000,Hemköp,120301230";
-		String purch = "Endi,Häst,Cost: 500,Hemköp, 12031230";
-		Category cat = new Category("Mat", 2000, new LinkedList());
-		cat.addPurchase(purchase);
-		cat.addPurchase(purch);
-		CategoryList catList = new CategoryList();
-		
-		catList.addCategory(cat);
-		Client a = new Client("127.0.0.1",3001,"Stefan");
+		String name = JOptionPane.showInputDialog("Ange ett användarnamn: ");
+		Client a = new Client("127.0.0.1",3001,name, new RegisterGUI());
 		new ClientController(a);
-		CategoryGUI catGUI = new CategoryGUI();
-		catGUI.createCategory(catList);
 		
 	}
 	

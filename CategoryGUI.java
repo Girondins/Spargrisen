@@ -20,6 +20,7 @@ public class CategoryGUI extends JFrame {
 	private LinkedList<JLabel>lblList = new LinkedList<JLabel>();
 	private LinkedList<JSlider>sliderList = new LinkedList<JSlider>();
 	private JFrame frame = new JFrame("BUDGET APPLIKATION");
+	private static CategoryGUI cg = new CategoryGUI();
 
 	public CategoryGUI() {
 		
@@ -29,10 +30,11 @@ public class CategoryGUI extends JFrame {
 		
 	}
 	public void createCategory(CategoryList cat) {
-		int sum=0;
+		int sum;
+		totalSum = 0;
 		for(int i = 0; i <cat.size(); i++){
 				Category cate;
-				cate = cat.getCategory();
+				cate = cat.getCategoryIndex(i);
 				
 				sum = Math.round(cate.getCurrentSum());
 				this.totalSum += cate.getCurrentSum();
@@ -60,6 +62,8 @@ public class CategoryGUI extends JFrame {
 	}
 	
 	private void createGUI(LinkedList<JSlider> sliderList, LinkedList<JLabel> lblList, float totalSum) {
+		frame.dispose();
+		frame = new JFrame("BUDGET APPLIKATION");
 		String totSumString = Float.toString(totalSum);
 		
 		mainPanel = new JPanel(new GridLayout(sliderList.size()+lblList.size()+1,1));
@@ -80,19 +84,21 @@ public class CategoryGUI extends JFrame {
 	}
 
 	public void startFrame() {
-		
-		frame.setLocationRelativeTo(null);
+
 		frame.setPreferredSize(new Dimension(300,416)); // galaxy S4 screen size
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setVisible(true);
 		frame.pack();
 	}
 
-//	public static void main(String[] args) {
-//		Category cat = new Category("Mat", 2000, new LinkedList());
-//		cat.addPurchase("Korv,Cost: 100,Lidl,söndag");
-//		new CategoryGUI(new CategoryList());
-//	}
+	public static void main(String[] args) {
+		CategoryGUI cg = new CategoryGUI();
+		CategoryList catList = new CategoryList();
+		catList.getCategoryIndex(1).addPurchase("Korv;Cost: 100;Lidl;söndag");
+		cg.createCategory(catList);
+		catList.getCategoryIndex(2).addPurchase("Korv;Cost: 1000;Lidl;söndag");
+		cg.createCategory(catList);
+	}
 
 }
 

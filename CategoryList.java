@@ -4,12 +4,15 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
-public class CategoryList implements Serializable {
-
-	private static final long serialVersionUID = 1L;
+public class CategoryList implements Serializable{
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2227755002117608428L;
 	private ArrayList<Category> categoryList = new ArrayList<Category>();
-	private int count = -1;
-	private final Category other = new Category("Other", 0, new LinkedList<String>());;
+	private int count = 0;
+	private final Category other = new Category("Other", 10000, new LinkedList<String>());;
 
 	public CategoryList() {
 		Category food = new Category("Food", 2000, new LinkedList<String>());
@@ -25,11 +28,11 @@ public class CategoryList implements Serializable {
 
 	public synchronized Category getCategory() {
 		if (count == categoryList.size()) {
-			count = -1;
+			count = 0;
 			return null;
 		} else
 			count++;
-		return categoryList.get(count);
+		return categoryList.get(count-1);
 	}
 
 	public synchronized void addCategory(Category category) {
@@ -58,6 +61,7 @@ public class CategoryList implements Serializable {
 	public boolean isEmpty() {
 		return categoryList.isEmpty();
 	}
+	
 
 	public int size() {
 		return categoryList.size();
