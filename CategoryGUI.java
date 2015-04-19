@@ -1,35 +1,49 @@
 package Spargrisen;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GridLayout;
+import java.awt.Image;
+import java.io.File;
+import java.io.IOException;
 import java.util.LinkedList;
+import java.util.Random;
 
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JSlider;
+import javax.swing.JProgressBar;
 
 
 
 public class CategoryGUI extends JFrame {
 	
 	private float totalSum;
-	private LinkedList<JPanel> panelList = new LinkedList<JPanel>();
 	private JPanel mainPanel = new JPanel();
 	private LinkedList<JLabel>lblList = new LinkedList<JLabel>();
-	private LinkedList<JSlider>sliderList = new LinkedList<JSlider>();
 	private JFrame frame = new JFrame("BUDGET APPLIKATION");
-	private static CategoryGUI cg = new CategoryGUI();
+	private JLabel contePane = new JLabel();
+	private LinkedList<JProgressBar> barList = new LinkedList<JProgressBar>();
+	private JProgressBar bar = new JProgressBar();
+	private Image backgroundImage;
 
-	public CategoryGUI() {
-		
-		
-//		createCategory(catList);
-		
+	
+	
+	
+	public CategoryGUI() throws IOException {
+		backgroundImage = ImageIO.read(new File("C:/Users/Alex/Desktop/BilderSpargrisen/header.jpg"));
+		ImageIcon icon = new ImageIcon(backgroundImage);
+		contePane.setIcon(icon);
+//		frame.setContentPane(contePane);
+		contePane.setLayout(null);
 		
 	}
-	public void createCategory(CategoryList cat) {
+	
+	public void createCategory(CategoryList cat) throws IOException {
 		int sum;
 		totalSum = 0;
 		for(int i = 0; i <cat.size(); i++){
@@ -37,105 +51,116 @@ public class CategoryGUI extends JFrame {
 				cate = cat.getCategoryIndex(i);
 				
 				sum = Math.round(cate.getCurrentSum());
-				this.totalSum += cate.getCurrentSum();
-//				JPanel CategorySlider = new JPanel(new GridLayout(1,2));
+				this.totalSum += cate.getCurrentSum();	
+				int budget = cate.getBudgetLimit();
+				String current;
+				current = "" + sum;
 				
+				JLabel lbl = new JLabel(current);
 				JLabel lblName = new JLabel(cate.getCategoryName());
-				JSlider slider = new JSlider(JSlider.HORIZONTAL,0,cate.getBudgetLimit(),sum);
-				slider.setMajorTickSpacing(cate.getBudgetLimit());
-				slider.setPaintLabels(true);
-				slider.setPaintTicks(true);
-				slider.setBackground(Color.RED);
-				slider.setPreferredSize(new Dimension(200,20));
-				slider.setValue(sum);
-//				CategorySlider.add(lblName);
-//				CategorySlider.add(slider);
+
+				this.bar = new JProgressBar(JProgressBar.HORIZONTAL,budget);
+
 				
-//				this.panelList.add(CategorySlider);
-				sliderList.add(slider);
+				bar.setMinimum(0);
+				bar.setMaximum(budget);
+				bar.setStringPainted(true);
+				if (budget<sum) {
+					bar.setForeground(Color.RED);
+				}else if (sum>( budget*0.75) ) {
+					bar.setForeground(Color.ORANGE);
+					}else {
+				
+				bar.setForeground(Color.green);
+				}
+//				bar.setForeground(Color.green);
+//				bar.setBackground(Color.BLACK);
+				bar.setString(current);
+				bar.add(lbl);
+				bar.setPreferredSize(new Dimension(200,20));
+				bar.setValue(sum);
+				barList.add(this.bar);
+
 				lblList.add(lblName);
 				
 		}
-//		createGUI(this.panelList, totalSum);
-		createGUI(sliderList,lblList,totalSum);
+
+		createGUI(barList,lblList,totalSum);
 		
 	}
 	
-	private void createGUI(LinkedList<JSlider> sliderList, LinkedList<JLabel> lblList, float totalSum) {
+
+	private void createGUI(LinkedList<JProgressBar> barList, LinkedList<JLabel> lblList, float totalSum) throws IOException {
 		frame.dispose();
 		frame = new JFrame("BUDGET APPLIKATION");
-		String totSumString = Float.toString(totalSum);
 		
-		mainPanel = new JPanel(new GridLayout(sliderList.size()+lblList.size()+1,1));
+		
+		String totSumString = Float.toString(totalSum);
+		JPanel wholePanel = new JPanel(new BorderLayout());
+		mainPanel = new JPanel(new GridLayout(barList.size()+lblList.size()+3,1));
+		Font font = new Font("serif", Font.PLAIN, 20);
+		
 		JLabel totalPanel = new JLabel("Current Sum:                              " + totSumString);
-//		totalPanel.setName("Current Sum: " + totSumString);
+		totalPanel.setFont(font);
+		totalPanel.setForeground(Color.WHITE);
+		
+		mainPanel.setBackground(new Color(49,69,159));
 		mainPanel.add(totalPanel);
 		
 		
 		while(!lblList.isEmpty()) {
+			Random rand = new Random();
+			float r = rand.nextFloat();
+			float g = rand.nextFloat();
+			float b = rand.nextFloat();
+			Color randomColor = new Color(r, g, b);
 			
 			
-			mainPanel.add(lblList.pop());
-			mainPanel.add(sliderList.pop());
+			JLabel lbl;
+			lbl = lblList.pop();
+			lbl.setFont(font);
+			lbl.setForeground(Color.WHITE);
+			mainPanel.add(lbl);
+			
+			JProgressBar proBar = null;
+			proBar = barList.pop();
+			
+			mainPanel.add(proBar);
+			
+
+			
+			
+			
+			
 		}
-		frame.add(mainPanel);
+		
+		wholePanel.add(contePane, BorderLayout.PAGE_START);
+		wholePanel.add(mainPanel, BorderLayout.CENTER);
+
+		frame.add(wholePanel);
 		startFrame();
 		
 	}
 
 	public void startFrame() {
 
-		frame.setPreferredSize(new Dimension(300,416)); // galaxy S4 screen size
+		frame.setPreferredSize(new Dimension(380,560));
+//		frame.setPreferredSize(new Dimension(300,416)); // galaxy S4 screen size
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setVisible(true);
 		frame.pack();
 	}
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		CategoryGUI cg = new CategoryGUI();
 		CategoryList catList = new CategoryList();
-		catList.getCategoryIndex(1).addPurchase("Korv;Cost: 100;Lidl;söndag");
+		catList.getCategoryIndex(1).addPurchase("Korv;Cost: 100;Lidl;s�ndag");
 		cg.createCategory(catList);
-		catList.getCategoryIndex(2).addPurchase("Korv;Cost: 1000;Lidl;söndag");
+		catList.getCategoryIndex(2).addPurchase("Korv;Cost: 1000;Lidl;s�ndag");
 		cg.createCategory(catList);
 	}
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// frame.setExtendedState(JFrame.MAXIMIZED_BOTH); / olika mobiler olika sk‰rmar
-// gˆr framen lika stor som displayen
-// frame.setResizable(false);
-
-
 
 
 
