@@ -1,4 +1,4 @@
-package Spargrisen;
+package SpargrisenClient;
 
 import java.io.Serializable;
 

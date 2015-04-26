@@ -1,4 +1,4 @@
-package Spargrisen;
+package SpargrisenClient;
 
 
 
@@ -21,16 +21,14 @@ public class Client extends Observable{
 	private Socket socket;
 	private ObjectOutputStream oos;
 	private ObjectInputStream ois;
-	private User user;
 
 	
 
-	public Client(String ip, int port, String name, RegisterGUI rg) throws UnknownHostException, IOException{
+	public Client(String ip, int port,RegisterGUI rg) throws UnknownHostException, IOException{
 			rg.addObserver(new ObserverImp());
 			socket = new Socket(ip,port);
 			ois = new ObjectInputStream(new BufferedInputStream(socket.getInputStream()));
 			oos = new ObjectOutputStream(new BufferedOutputStream(socket.getOutputStream()));
-			user = new User(name); 
 			new ClientStarter().start();
 		}
 	
@@ -41,7 +39,7 @@ public class Client extends Observable{
 	}
 	
 
-	public void connect() {
+	public void connect(User user) {
 
 		try {
 			oos.writeObject(user);
@@ -57,6 +55,18 @@ public class Client extends Observable{
 			oos.writeObject(purchase);
 			oos.flush();
 		} catch (IOException e){
+			e.printStackTrace();
+		}
+	}
+	
+	public void updateUser(User user){
+		//Går att använda för att uppdatera server, KASTA INTE
+		try {
+			oos.reset();
+			oos.writeObject(user);
+			oos.flush();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -78,8 +88,13 @@ public class Client extends Observable{
 			while (true) {
 				try {
 					object = ois.readObject();
-					System.out.println(object.toString());
-					clientController.newObject(object);
+					if(object instanceof User) {
+						User user = (User) object;
+						clientController.setUserInfo(user);
+					}else if(object instanceof String){
+						String message = (String)object;
+						clientController.showMessage(message);
+					}
 
 				} catch (IOException | ClassNotFoundException ex) {
 					System.err.print(ex);

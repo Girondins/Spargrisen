@@ -1,4 +1,4 @@
-package Spargrisen;
+package SpargrisenClient;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -76,6 +76,10 @@ public class Category implements Serializable{
 			return true;
 		}
 		else return false;
+	}
+	
+	public LinkedList<String> getTagList(){
+		return this.tagList;
 	}
 		
 
