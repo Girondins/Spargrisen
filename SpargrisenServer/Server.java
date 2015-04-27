@@ -8,7 +8,10 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
-import SpargrisenClient.User;
+import SpargrisenObjekt.Category;
+import SpargrisenObjekt.RegisterUser;
+import SpargrisenObjekt.AvailableUser;
+import SpargrisenObjekt.Tag;
 
 /**
  * Klassen är en "Chat Server" som kan lagra och skicka ut meddelande till
@@ -25,14 +28,12 @@ public class Server implements Runnable {
 	private ServerSocket serverSocket;
 	private Thread server = new Thread(this);
 	private ArrayList<ClientHandler> alch;
-	private User user;
+	private AvailableUser user;
 	private ClientHandler clientHandler;
-	private LinkedList<User> userList;
 
 	public Server(int port) throws IOException {
 		this.serverSocket = new ServerSocket(port);
 		alch = new ArrayList<ClientHandler>();
-		userList = new LinkedList<User>();
 		server.start();
 	}
 
@@ -63,6 +64,7 @@ public class Server implements Runnable {
 		private Socket socket;
 		private ObjectOutputStream oos;
 		private ObjectInputStream ois;
+		private InformationHandler is;
 
 		/**
 		 * Konstruktor som tar emot rätt socket från klient
@@ -75,6 +77,7 @@ public class Server implements Runnable {
 			this.socket = socket;
 			oos = new ObjectOutputStream(socket.getOutputStream());
 			ois = new ObjectInputStream(socket.getInputStream());
+			is = new InformationHandler();
 		}
 
 		/**
@@ -83,6 +86,9 @@ public class Server implements Runnable {
 		 */
 		public void run() {
 			Object object = null;
+			Category category;
+			RegisterUser registerUser;
+			Tag tag = null;
 			String purchase;
 
 			try {
@@ -90,18 +96,28 @@ public class Server implements Runnable {
 
 					object = ois.readObject();
 
-					if (object instanceof User) {
-						user = (User) object;
+					if (object instanceof AvailableUser) {
+						user = (AvailableUser) object;
 						user.setID(clientHandler.getId());
-						if (doesUserExist(user)) {
-							retriveUser(user);
-						} else
-							registerUser(user);
+						if (is.doesUserExist(user)) {
+							sendUpdatedInfo(is.retriveUser(user));
+						} else {
+							if (object instanceof RegisterUser) {
+								registerUser = (RegisterUser) object;
+								sendUpdatedInfo(is.registerUser(registerUser));
+							}
+						}
 					} else if (object instanceof String) {
 						purchase = (String) object;
-						handleTransaction(purchase);
-
+						// handleTransaction(purchase);
+					} else if (object instanceof Category) {
+						category = (Category) object;
+						sendUpdatedInfo(is.addCategory(category));
 					}
+					else if (object instanceof Tag){
+						sendUpdatedInfo(is.addTag(tag));
+					}
+
 				}
 			} catch (IOException | ClassNotFoundException e) {
 				System.err.println("fel");
@@ -116,76 +132,44 @@ public class Server implements Runnable {
 
 		}
 
-		public void retriveUser(User user) throws IOException {
-			User retriveUser = null;
-			for (int i = 0; i < userList.size(); i++) {
-				if (userList.get(i).getName().equals(user.getName())) {
-					retriveUser = userList.get(i);
-				}
-			}
-			oos.writeObject(retriveUser);
-			oos.flush();
-		}
+		// public void handleTransaction(String purchase) throws IOException {
+		// String[] parts = purchase.split(";");
+		// User newUser = null;
+		// boolean tagExist = false;
+		// String userName = parts[0].substring(6, parts[0].length());
+		//
+		// for (int i = 0; i < userList.size(); i++) {
+		// if (userList.get(i).getName().equals(userName)) {
+		// newUser = userList.get(i);
+		// }
+		//
+		// for (int j = 0; j < newUser.getCategoryList().size(); j++) {
+		// if (newUser.getCategoryList().getCategoryIndex(j)
+		// .checkTags(parts[3])) {
+		// newUser.getCategoryList().getCategoryIndex(j)
+		// .addPurchase(purchase);
+		// tagExist = true;
+		// }
+		// }
+		// if (tagExist == false) {
+		// newUser.getCategoryList()
+		// .getCategoryIndex(
+		// newUser.getCategoryList().size() - 1)
+		// .addPurchase(purchase);
+		// System.out.println("Här");
+		// }
+		//
+		// userList.set(i, newUser);
+		// user = newUser;
+		//
+		// }
+		// sendUpdatedInfo(user);
+		// }
 
-		public boolean doesUserExist(User user) {
-			for (int i = 0; i < userList.size(); i++) {
-				if (userList.get(i).getName().equals(user.getName())) {
-					return true;
-				}
-			}
-			return false;
-		}
-
-		public void registerUser(User user) throws IOException {
-			String register;
-			register = "Welcome! " + user.getName() + "\n"
-					+ "You have now been succesfully registerd!";
-			userList.add(user);
-			oos.writeObject(register);
-			oos.flush();
-			oos.writeObject(user);
-			oos.flush();
-
-		}
-
-		public void handleTransaction(String purchase) throws IOException {
-			String[] parts = purchase.split(";");
-			User newUser = null;
-			boolean tagExist = false;
-			String userName = parts[0].substring(6, parts[0].length());
-
-			for (int i = 0; i < userList.size(); i++) {
-				if (userList.get(i).getName().equals(userName)) {
-					newUser = userList.get(i);
-				}
-
-				for (int j = 0; j < newUser.getCategoryList().size(); j++) {
-					if (newUser.getCategoryList().getCategoryIndex(j)
-							.checkTags(parts[3])) {
-						newUser.getCategoryList().getCategoryIndex(j)
-								.addPurchase(purchase);
-						tagExist = true;
-					}
-				}
-				if (tagExist == false) {
-					newUser.getCategoryList()
-							.getCategoryIndex(
-									newUser.getCategoryList().size() - 1)
-							.addPurchase(purchase);
-					System.out.println("Här");
-				}
-				
-				userList.set(i, newUser);
-				user = newUser;
-				
-			}
-			sendUpdatedInfo(user);
-		}
-
-		public void sendUpdatedInfo(User user) throws IOException {
-//			
-//			oos.writeObject(user);
-//			oos.flush();
+		public void sendUpdatedInfo(AvailableUser user) throws IOException {
+			//
+			// oos.writeObject(user);
+			// oos.flush();
 			for (int i = 0; i < alch.size(); i++) {
 				if (alch.get(i).getId() == user.getID()) {
 					ClientHandler ch = alch.get(i);
@@ -195,7 +179,6 @@ public class Server implements Runnable {
 					ch.oos.reset();
 					ch.oos.writeObject(user);
 					ch.oos.flush();
-					
 
 				}
 			}

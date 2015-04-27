@@ -22,7 +22,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.border.Border;
 
-import SpargrisenClient.Category;
+import SpargrisenObjekt.Category;
 
 
 
@@ -91,7 +91,7 @@ public class CreateCategory implements ActionListener{
 		if(e.getSource() == createCategory){
 			String categoryName = categoryText.getText();
 			int budgetLimit = Integer.parseInt(limitText.getText());
-			GUIc.addCategory(new Category(categoryName, budgetLimit, new LinkedList()));
+			GUIc.addCategory(categoryName,budgetLimit);
 			JOptionPane.showMessageDialog(null,"CATEGORY: " + categoryName + " has now been created");
 			try {
 				GUIc.createCategoryList();;

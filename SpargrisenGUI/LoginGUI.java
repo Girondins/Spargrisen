@@ -27,7 +27,7 @@ public class LoginGUI extends JFrame{
 	private JLabel imageLbl = new JLabel();
 	private Image backgroundImage;
 	private JFrame frame = new JFrame();
-	private JButton Loginbtb = new JButton("Logga in");
+	private JButton loginbtb = new JButton("Logga in");
 	
 	Font font = new Font("serif", Font.PLAIN, 18);
 
@@ -154,7 +154,8 @@ public class LoginGUI extends JFrame{
 		
 //		panel.add(userTxt);
 		panel.add(passTxt, javax.swing.BorderFactory.createLineBorder(Color.BLACK, 30, true));
-		panel.add(userTxt, javax.swing.BorderFactory.createLineBorder(Color.BLACK, 30, true));		
+		panel.add(userTxt, javax.swing.BorderFactory.createLineBorder(Color.BLACK, 30, true));	
+		panel.add(loginbtb);
 		wholePanel.add(imageLbl, BorderLayout.PAGE_START);
 		wholePanel.add(panel, BorderLayout.CENTER);
 		

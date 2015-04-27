@@ -22,8 +22,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 
-import SpargrisenClient.Category;
-import SpargrisenClient.CategoryList;
+import SpargrisenObjekt.Category;
+import SpargrisenObjekt.CategoryList;
 
 
 

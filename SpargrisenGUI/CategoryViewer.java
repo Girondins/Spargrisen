@@ -19,7 +19,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JSlider;
 import javax.swing.JTextArea;
 
-import SpargrisenClient.Category;
+import SpargrisenObjekt.Category;
 
 
 
