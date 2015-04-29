@@ -15,10 +15,9 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import SpargrisenClient.CategoryList;
 import SpargrisenClient.ClientController;
-import SpargrisenObjekt.CategoryList;
-import SpargrisenObjekt.AvailableUser;
-import SpargrisenObjekt.User;
+import SpargrisenClient.User;
 
 
 public class HomePageGUI implements ActionListener{

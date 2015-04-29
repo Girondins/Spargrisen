@@ -9,12 +9,6 @@ import javax.swing.JOptionPane;
 import SpargrisenGUI.CategoryGUI;
 import SpargrisenGUI.GUIController;
 import SpargrisenGUI.HomePageGUI;
-import SpargrisenObjekt.AvailableUser;
-import SpargrisenObjekt.Category;
-import SpargrisenObjekt.RegisterUser;
-import SpargrisenObjekt.Tag;
-import SpargrisenObjekt.User;
-import SpargrisenServer.InputGUI;
 
 
 
@@ -34,7 +28,7 @@ public class ClientController{
 	}
 	
 	public void connect() throws IOException{
-		AvailableUser user = new AvailableUser(name); 
+		User user = new User(name); 
 		GUIc = new GUIController(this,user);
 		client.connect(user);
 	}
@@ -50,31 +44,15 @@ public class ClientController{
 		//Går att använda för att uppdatera server, KASTA INTE
 	}
 	
-	public void registerUser(String userName, String password){
-		RegisterUser rg = new RegisterUser(userName);
-		rg.setPassword(password);
-		
-		
-		client.registerUser(rg);
-	}
-	
 	
 	public void showMessage(String message){
 		JOptionPane.showMessageDialog(null, message);
 	}
 	
-	public void addCategory(Category category){
-		client.addCategory(category);
-	}
-	
-	public void addTag(Tag tag){
-		client.addTag(tag);
-	}
-	
 	
 	
 	public static void main(String [] args) throws IOException{
-		Client a = new Client("127.0.0.1",3001);
+		Client a = new Client("127.0.0.1",3001,new RegisterGUI());
 		new ClientController(a);
 		
 	}

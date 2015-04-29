@@ -14,14 +14,7 @@ import java.util.Observer;
 
 import javax.swing.JOptionPane;
 
-import SpargrisenObjekt.AvailableUser;
-import SpargrisenObjekt.Category;
-import SpargrisenObjekt.RegisterUser;
-import SpargrisenObjekt.Tag;
-import SpargrisenObjekt.User;
-import SpargrisenServer.InputGUI;
-
-public class Client{
+public class Client extends Observable{
 
 	
 	private ClientController clientController;
@@ -31,7 +24,8 @@ public class Client{
 
 	
 
-	public Client(String ip, int port) throws UnknownHostException, IOException{
+	public Client(String ip, int port,RegisterGUI rg) throws UnknownHostException, IOException{
+			rg.addObserver(new ObserverImp());
 			socket = new Socket(ip,port);
 			ois = new ObjectInputStream(new BufferedInputStream(socket.getInputStream()));
 			oos = new ObjectOutputStream(new BufferedOutputStream(socket.getOutputStream()));
@@ -45,7 +39,7 @@ public class Client{
 	}
 	
 
-	public void connect(AvailableUser user) {
+	public void connect(User user) {
 
 		try {
 			oos.writeObject(user);
@@ -68,7 +62,7 @@ public class Client{
 	public void updateUser(User user){
 		//Går att använda för att uppdatera server, KASTA INTE
 		try {
-
+			oos.reset();
 			oos.writeObject(user);
 			oos.flush();
 		} catch (IOException e) {
@@ -77,41 +71,15 @@ public class Client{
 		}
 	}
 	
-	public void addCategory(Category category){
-		
-		try {
-			oos.writeObject(category);
-			oos.flush();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+	private class ObserverImp implements Observer{
 
-	}
-	
-	public void addTag(Tag tag){
-
-		try {
-			oos.writeObject(tag);
-			oos.flush();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		public void update(Observable o, Object arg) {
+			String purchase = (String)arg;
+			makePurchase(purchase);
+			
 		}
-	}
-	
-	public void registerUser(RegisterUser registerUser){
 		
-		
-		try {
-			oos.writeObject(registerUser);
-			oos.flush();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
-	
 	
 
 	private class ClientStarter extends Thread {
