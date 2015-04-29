@@ -1,16 +1,17 @@
-package SpargrisenClient;
+package SpargrisenObjekt;
 
 import java.io.Serializable;
 
-public class User implements Serializable{
+public class AvailableUser implements Serializable, User{
 
 	private static final long serialVersionUID = 1L;
 	private String userName;
 	private String passWord;
-	private CategoryList categoryList = new CategoryList();
+	private CategoryList categoryList;
 	private long ID;
 	private String firstName;
 	private String lastName;
+	private int toDo;
 
 //	public User(String userName, String passWord) {
 //		this.userName = userName;
@@ -19,9 +20,9 @@ public class User implements Serializable{
 //
 //	}
 	
-	public User(String userName){
+	public AvailableUser(String userName){
 		this.userName = userName;
-		this.categoryList = new CategoryList();
+		this.categoryList = new CategoryList(this);
 	}
 
 	public void setName(String UserName) {
@@ -48,12 +49,20 @@ public class User implements Serializable{
 		return categoryList;
 	}
 
-	public void setID(long ID) {
-		this.ID = ID;
+	public void setID(long id) {
+		this.ID = id;
 	}
 
 	public long getID() {
 		return ID;
+	}
+	
+	public void setToDo(int task){
+		this.toDo = task;
+	}
+	
+	public int getToDo(){
+		return this.toDo;
 	}
 
 	public void setFirstName(String firstName) {

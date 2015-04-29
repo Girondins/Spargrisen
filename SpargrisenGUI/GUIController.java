@@ -1,17 +1,21 @@
 package SpargrisenGUI;
 
 import java.io.IOException;
+import java.util.LinkedList;
 
-import SpargrisenClient.Category;
 import SpargrisenClient.ClientController;
-import SpargrisenClient.User;
+import SpargrisenObjekt.Category;
+import SpargrisenObjekt.AvailableUser;
+import SpargrisenObjekt.RegisterUser;
+import SpargrisenObjekt.Tag;
+import SpargrisenObjekt.User;
 
 public class GUIController {
 	private User user;
 	private HomePageGUI hpGUI;
 	private ClientController cc;
 	
-	public GUIController(ClientController cc,User user){
+	public GUIController(ClientController cc,AvailableUser user){
 		this.cc = cc;
 		this.user = user;
 		hpGUI = new HomePageGUI(this,user);
@@ -35,18 +39,22 @@ public class GUIController {
 		hpGUI.createTagViewer(user.getCategoryList());
 	}
 	
-	public void addCategory(Category category){
-		user.getCategoryList().addCategory(category);
-		cc.updateUser(user);		//Går att använda för att uppdatera server, KASTA INTE
+	public void addCategory(String categoryName, int budgetLimit){
+		cc.addCategory(new Category(categoryName,budgetLimit,user,new LinkedList()));
+
 	}
 	
-	public void addTag(String tag,Category category){
-		for(int i = 0; i<user.getCategoryList().size(); i++){
-			if(user.getCategoryList().getCategoryIndex(i).getCategoryName().equals(category.getCategoryName())){
-				user.getCategoryList().getCategoryIndex(i).addTag(tag);
-			}
-		}
-		cc.updateUser(user); 		//Går att använda för att uppdatera server, KASTA INTE
+	public void registerUser(String userName, String password){
+		cc.registerUser(userName,password);
+	}
+	
+	public void changeCategorylimit(String categoryName,int budgetlimit){
+		
+	}
+	
+	public void addTag(Tag tag){
+		tag.setUserName(user.getName());
+		cc.addTag(tag); 		//Går att använda för att uppdatera server, KASTA INTE
 	}
 	
 	public void homePage(){

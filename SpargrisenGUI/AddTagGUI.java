@@ -22,7 +22,8 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.border.Border;
 
-import SpargrisenClient.Category;
+import SpargrisenObjekt.Category;
+import SpargrisenObjekt.Tag;
 
 
 
@@ -86,7 +87,8 @@ public class AddTagGUI implements ActionListener{
 	public void actionPerformed(ActionEvent e) {
 		if(e.getSource() == addTag){
 			String tagName = tagText.getText();
-			GUIc.addTag(tagName,category);
+			Tag tag = new Tag(tagName,category.getCategoryName());
+			GUIc.addTag(tag);
 			JOptionPane.showMessageDialog(null,"TAG: [" + tagName + "] Has been added to CATEGORY: " + category.getCategoryName() );
 			try {
 				GUIc.createTagViewer();

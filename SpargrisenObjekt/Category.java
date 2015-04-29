@@ -1,4 +1,4 @@
-package SpargrisenClient;
+package SpargrisenObjekt;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -12,14 +12,21 @@ public class Category implements Serializable{
 	private String categoryName;
 	private int budgetLimit;
 	private float currentSum;
+	private String userID;
+	private int toDo = 0;
 	private ArrayList<String> purchaseList = new ArrayList<String>();
 	private LinkedList<String> tagList = new LinkedList<String>();
 	private ArrayList<Float> sumList = new ArrayList <Float>();
 	
-	public Category(String categoryName, int budgetLimit, LinkedList<String> tagList){
+	public Category(String categoryName, int budgetLimit, User user, LinkedList<String> tagList){
+		this.userID = user.getName();
 		this.categoryName = categoryName;
 		this.budgetLimit = budgetLimit;
 		this.tagList = tagList;
+	}
+	
+	public String getUser(){
+		return this.userID;
 	}
 	
 	public void setCategoryName(String newCategoryName){
@@ -36,6 +43,14 @@ public class Category implements Serializable{
 	
 	public int getBudgetLimit(){
 		return this.budgetLimit;
+	}
+	
+	public void setToDo(int task){
+		this.toDo = task;
+	}
+	
+	public int getToDo(){
+		return this.toDo;
 	}
 	
 	public void setCurrentSum(){

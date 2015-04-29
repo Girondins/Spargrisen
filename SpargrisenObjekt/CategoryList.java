@@ -1,4 +1,4 @@
-package SpargrisenClient;
+package SpargrisenObjekt;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -12,11 +12,13 @@ public class CategoryList implements Serializable{
 	private static final long serialVersionUID = 2227755002117608428L;
 	private ArrayList<Category> categoryList = new ArrayList<Category>();
 	private int count = 0;
-	private final Category other = new Category("Other", 10000, new LinkedList<String>());;
+	private final Category other;
 
-	public CategoryList() {
-		Category food = new Category("Food", 2000, new LinkedList<String>());
-		Category entertainment = new Category("Entertainment", 1000, new LinkedList<String>());
+	public CategoryList(User user) {
+
+		Category food = new Category("Food", 2000, user, new LinkedList<String>());
+		Category entertainment = new Category("Entertainment", 1000,user, new LinkedList<String>());
+		other = new Category("Other", 10000 ,user, new LinkedList<String>());
 		categoryList.add(food);
 		categoryList.add(entertainment);
 		categoryList.add(other);

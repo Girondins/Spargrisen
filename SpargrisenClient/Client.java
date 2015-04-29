@@ -14,7 +14,14 @@ import java.util.Observer;
 
 import javax.swing.JOptionPane;
 
-public class Client extends Observable{
+import SpargrisenObjekt.AvailableUser;
+import SpargrisenObjekt.Category;
+import SpargrisenObjekt.RegisterUser;
+import SpargrisenObjekt.Tag;
+import SpargrisenObjekt.User;
+import SpargrisenServer.InputGUI;
+
+public class Client{
 
 	
 	private ClientController clientController;
@@ -24,8 +31,7 @@ public class Client extends Observable{
 
 	
 
-	public Client(String ip, int port,RegisterGUI rg) throws UnknownHostException, IOException{
-			rg.addObserver(new ObserverImp());
+	public Client(String ip, int port) throws UnknownHostException, IOException{
 			socket = new Socket(ip,port);
 			ois = new ObjectInputStream(new BufferedInputStream(socket.getInputStream()));
 			oos = new ObjectOutputStream(new BufferedOutputStream(socket.getOutputStream()));
@@ -39,7 +45,7 @@ public class Client extends Observable{
 	}
 	
 
-	public void connect(User user) {
+	public void connect(AvailableUser user) {
 
 		try {
 			oos.writeObject(user);
@@ -62,7 +68,7 @@ public class Client extends Observable{
 	public void updateUser(User user){
 		//Går att använda för att uppdatera server, KASTA INTE
 		try {
-			oos.reset();
+
 			oos.writeObject(user);
 			oos.flush();
 		} catch (IOException e) {
@@ -71,15 +77,52 @@ public class Client extends Observable{
 		}
 	}
 	
-	private class ObserverImp implements Observer{
-
-		public void update(Observable o, Object arg) {
-			String purchase = (String)arg;
-			makePurchase(purchase);
-			
-		}
+	public void addCategory(Category category){
 		
+		try {
+			oos.writeObject(category);
+			oos.flush();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 	}
+	
+	public void changeCategoryLimit(Category category){
+		
+		try {
+			oos.writeObject(category);
+			oos.flush();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public void addTag(Tag tag){
+
+		try {
+			oos.writeObject(tag);
+			oos.flush();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public void registerUser(RegisterUser registerUser){
+		
+		
+		try {
+			oos.writeObject(registerUser);
+			oos.flush();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
 	
 
 	private class ClientStarter extends Thread {
