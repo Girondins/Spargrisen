@@ -45,7 +45,7 @@ public class Client{
 	}
 	
 
-	public void connect(AvailableUser user) {
+	public void connect(User user) {
 
 		try {
 			oos.writeObject(user);
@@ -131,9 +131,17 @@ public class Client{
 			while (true) {
 				try {
 					object = ois.readObject();
-					if(object instanceof User) {
-						User user = (User) object;
+					if(object instanceof AvailableUser) {
+						AvailableUser user = (AvailableUser) object;
+						if(user.getToDo() == 1){
+							clientController.connect(user);
+						}else if(user.getToDo() == 2){
+							JOptionPane.showMessageDialog(null, "Welcome! " + user.getName() + "\n" + 
+															"You have now been succesfully registerd!");
+							clientController.connect(user);
+						}
 						clientController.setUserInfo(user);
+						
 					}else if(object instanceof String){
 						String message = (String)object;
 						clientController.showMessage(message);

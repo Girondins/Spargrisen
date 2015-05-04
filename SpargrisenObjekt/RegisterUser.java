@@ -6,7 +6,7 @@ public class RegisterUser implements Serializable,User{
 
 	private static final long serialVersionUID = 1L;
 	private String userName;
-	private String passWord;
+	private char[] passWord;
 	private CategoryList categoryList;
 	private long ID;
 	private String firstName;
@@ -32,11 +32,11 @@ public class RegisterUser implements Serializable,User{
 		return userName;
 	}
 
-	public void setPassword(String passWord) {
+	public void setPassword(char[] passWord) {
 		this.passWord = passWord;
 	}
 
-	public String getPassword() {
+	public char[] getPassword() {
 		return passWord;
 	}
 
@@ -70,6 +70,16 @@ public class RegisterUser implements Serializable,User{
 
 	public String getLastName() {
 		return lastName;
+	}
+
+	@Override
+	public void setToDo(int task) {
+		
+	}
+
+	@Override
+	public int getToDo() {
+		return 0;
 	}
 
 }

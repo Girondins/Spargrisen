@@ -8,6 +8,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
+import Spara.InformationHandler;
 import SpargrisenObjekt.Category;
 import SpargrisenObjekt.RegisterUser;
 import SpargrisenObjekt.AvailableUser;
@@ -101,7 +102,8 @@ public class Server implements Runnable {
 						
 						if (is.doesUserExist(user)) {
 							sendUpdatedInfo(is.retriveUser(user));
-						}
+						}else
+							wrongUser();
 						
 						
 
@@ -174,6 +176,20 @@ public class Server implements Runnable {
 		// }
 		// sendUpdatedInfo(user);
 		// }
+		
+		public void wrongUser(){
+			String message = "You have Entered an Invalid Username/Password";
+			
+			try {
+				oos.writeObject(message);
+				oos.flush();
+				
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		}
 
 		public void sendUpdatedInfo(AvailableUser user) throws IOException {
 			//

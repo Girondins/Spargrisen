@@ -15,7 +15,7 @@ public class GUIController {
 	private HomePageGUI hpGUI;
 	private ClientController cc;
 	
-	public GUIController(ClientController cc,AvailableUser user){
+	public GUIController(ClientController cc,User user){
 		this.cc = cc;
 		this.user = user;
 		hpGUI = new HomePageGUI(this,user);
@@ -44,9 +44,6 @@ public class GUIController {
 
 	}
 	
-	public void registerUser(String userName, String password){
-		cc.registerUser(userName,password);
-	}
 	
 	public void changeCategorylimit(String categoryName,int budgetlimit){
 		

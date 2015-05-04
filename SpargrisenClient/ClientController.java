@@ -23,34 +23,40 @@ public class ClientController{
 	
 	private Client client;	
 	private GUIController GUIc;
-	private String name;
+	private AvailableUser user;
 
 	
 	public ClientController(Client client) throws IOException{
 		this.client = client;
-		name = JOptionPane.showInputDialog("Ange ett användarnamn: ");
 		client.setClientController(this);
-		connect();
+		startLogin();
 	}
 	
-	public void connect() throws IOException{
-		AvailableUser user = new AvailableUser(name); 
+	public void connect(AvailableUser user) throws IOException{
+		this.user = user;
 		GUIc = new GUIController(this,user);
+
+	}
+	
+	public void checkUser(String userName, char[] password){
+		user = new AvailableUser(userName);
+		user.setPassword(password);
 		client.connect(user);
+		
 	}
 	
 	
-	public void setUserInfo(User user) throws IOException {
+	public void setUserInfo(AvailableUser user) throws IOException {
 		GUIc.setUser(user);
 		
 		
 	}
-	public void updateUser(User user){
+	public void updateUser(AvailableUser user){
 		client.updateUser(user);
 		//Går att använda för att uppdatera server, KASTA INTE
 	}
 	
-	public void registerUser(String userName, String password){
+	public void registerUser(String userName, char[] password){
 		RegisterUser rg = new RegisterUser(userName);
 		rg.setPassword(password);
 		
@@ -59,8 +65,14 @@ public class ClientController{
 	}
 	
 	
-	public void showMessage(String message){
+	public void showMessage(String message) throws IOException{
 		JOptionPane.showMessageDialog(null, message);
+			startLogin();
+	
+	}
+	
+	public void startLogin() throws IOException{
+		new LoginGUI(this);
 	}
 	
 	public void addCategory(Category category){

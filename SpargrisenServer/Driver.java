@@ -7,6 +7,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import Spara.InformationHandler;
+
 public class Driver {
 	
 	private static Connection con;
@@ -54,12 +56,12 @@ public class Driver {
 	 */
 	
 	public static void connectionToMysql(){
-		String host = "jdbc:mysql://94.254.94.236:51515";
+	//	String host = "jdbc:mysql://94.254.94.236:51515/MinDataBas";
 	// For Internet Use	
 		
-		String userName = "Bob";
-		String passWord = "bob";
-//		String host = "jdbc:mysql://192.168.1.22:51515";
+		String userName = "Spargrisen";
+		String passWord = "spargrisen";
+		String host = "jdbc:mysql://192.168.1.22:51515";
 	
 		try {
 			con = DriverManager.getConnection(host, userName, passWord);
@@ -80,7 +82,7 @@ public class Driver {
 
 			
 			while (resSet.next()){
-				System.out.println(resSet.getString("ID")+" "+resSet.getString("first")+" "+resSet.getString("last")+" "+resSet.getString("age"));
+				System.out.println(resSet.getString("CategoryID")+" "+resSet.getString("CategoryName")+" "+resSet.getString("User")+" "+resSet.getString("Border"));
 			}
 			
 		} catch (SQLException e) {
@@ -176,8 +178,96 @@ public class Driver {
 		System.out.println("Information uppdated...");
 	}
 		
-	
+	public static boolean isUserFree(String userName){
+		System.out.println("Cheking if User name exist in system");
+		boolean isTrue = true;
+		try{
+			stat = con.createStatement();
+			
+			String sql = "SELECT * FROM spargrisen.user";
+			
+			resSet = stat.executeQuery(sql);
+			
+			while(resSet.next()){
+				if(userName == resSet.getString("UserName")){
+					isTrue = false;
+				}
+			}
+		}catch (SQLException e){
+			e.printStackTrace();
+		}
+		return isTrue;
 		
+	}
+	
+	public static void retriveUser(String userName) {
+		try{
+			stat = con.createStatement();
+			
+			String sql = "SELECT * FROM spargrisen.User";
+			
+			resSet = stat.executeQuery(sql);
+			
+			while(resSet.next()){
+				if(userName == resSet.getString("username")){
+				
+				
+				}
+			}
+		}catch (SQLException e){
+			e.printStackTrace();
+		}
+	
+	}
+	
+	public static void createNewUser(String name, char[] password){
+		System.out.println("Addning new user...");
+		try{
+			stat = con.createStatement();
+			String sql = "INSERT INTO spargrisen.user "+
+						 "VALUES("+
+						 "'"+name+"'"+","+
+						 "'"+password+"'"+")";
+						 
+			stat.executeUpdate(sql);
+		}catch (SQLException e){
+			e.printStackTrace();
+		}
+		System.out.println("User added...");
+	}
+	
+	public static void addCategory(String categoryName, String userName, int limit) {
+		System.out.println("Addning new Category...");
+		try{
+			stat = con.createStatement();
+			String sql = "INSERT INTO spargrisen.category (CategoryID, CategoryName, User, Border) "+
+						 "VALUES(NULL, '"+categoryName+"', "+
+						 "'"+userName+"', "
+						 +limit+")";
+			stat.executeUpdate(sql);
+		}catch (SQLException e){
+			e.printStackTrace();
+		}
+		System.out.println("Category added...");
+	}
+		
+	
+	public static void addTag(String userName, String tagName, String CategoryName) {
+		System.out.println("Addning new Tag...");
+		try{
+			stat = con.createStatement();
+			String sql = "INSERT INTO spargrisen.tag (TagID, CategoryName, User, Border) "+
+						 "VALUES(NULL, '"+userName+"', "+
+						 "'"+tagName+"', '"
+						 +CategoryName+"')";
+			stat.executeUpdate(sql);
+		}catch (SQLException e){
+			e.printStackTrace();
+		}
+		System.out.println("Tag added...");
+	}
+		
+	
 		
 		
 	
@@ -190,9 +280,16 @@ public class Driver {
 //		updateTable(3333, "Gunnar", "PangPang", 30);
 //		updateTable(4444, "Hjalmar", "Myrder", 25);
 //		updateTable(6666, "Menjie", "MaoBao", 23);
-		querySelectFrom("spargrisen","wanker");
+//		querySelectFrom("spargrisen","wanker");
+//		createNewUser("Menjie", "pasword");
+//		addCategory("mat", "Menjie", 5000);
+//		addCategory("spel", "Menjie", 5000);
+		querySelectFrom("spargrisen", "category");
+	}
+
 	
 
-	}
+	
+	
 
 }
