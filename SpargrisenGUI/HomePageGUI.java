@@ -128,6 +128,11 @@ public class HomePageGUI implements ActionListener{
 			}
 		}
 		
+		if(e.getSource() == option){
+			frame.dispose();
+			GUIc.option();
+		}
+		
 	}
 	
 //	public static void main(String[]args){

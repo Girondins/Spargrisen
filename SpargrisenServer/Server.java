@@ -6,9 +6,7 @@ import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.LinkedList;
 
-import Spara.InformationHandler;
 import SpargrisenObjekt.Category;
 import SpargrisenObjekt.RegisterUser;
 import SpargrisenObjekt.AvailableUser;
@@ -99,6 +97,9 @@ public class Server implements Runnable {
 
 					if (object instanceof AvailableUser) {
 						user = (AvailableUser) object;
+						if(user.getToDo()==1){
+							sendUpdatedInfo(is.editUser(user));
+						}else
 						
 						if (is.doesUserExist(user)) {
 							sendUpdatedInfo(is.retriveUser(user));
@@ -110,6 +111,8 @@ public class Server implements Runnable {
 						}
 					else if (object instanceof RegisterUser) {
 						registerUser = (RegisterUser) object;
+						for(int i = 0 ; i<registerUser.getPassword().length; i++){
+						}
 						sendUpdatedInfo(is.registerUser(registerUser));
 					}
 					

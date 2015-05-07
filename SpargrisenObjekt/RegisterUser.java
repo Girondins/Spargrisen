@@ -10,7 +10,7 @@ public class RegisterUser implements Serializable,User{
 	private CategoryList categoryList;
 	private long ID;
 	private String firstName;
-	private String lastName;
+	private String changeName;
 
 //	public User(String userName, String passWord) {
 //		this.userName = userName;
@@ -64,12 +64,12 @@ public class RegisterUser implements Serializable,User{
 		return firstName;
 	}
 
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
+	public void setChangeName(String changeName) {
+		this.changeName = changeName;
 	}
 
-	public String getLastName() {
-		return lastName;
+	public String getChangeName() {
+		return changeName;
 	}
 
 	@Override

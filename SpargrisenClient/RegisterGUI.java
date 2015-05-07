@@ -91,6 +91,7 @@ public class RegisterGUI implements ActionListener {
 				for (int i = 0; i < pass.length; i++) {
 					if (pass[i] == vPass[i]) {
 						count = count + 2;
+					
 					}
 				}
 

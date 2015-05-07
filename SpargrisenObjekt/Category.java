@@ -25,6 +25,13 @@ public class Category implements Serializable{
 		this.tagList = tagList;
 	}
 	
+	public Category(String categoryName, int budgetLimit, LinkedList<String> tagList){
+
+		this.categoryName = categoryName;
+		this.budgetLimit = budgetLimit;
+		this.tagList = tagList;
+	}
+	
 	public String getUser(){
 		return this.userID;
 	}

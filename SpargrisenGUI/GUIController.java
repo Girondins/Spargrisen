@@ -11,23 +11,24 @@ import SpargrisenObjekt.Tag;
 import SpargrisenObjekt.User;
 
 public class GUIController {
-	private User user;
+	private AvailableUser user;
 	private HomePageGUI hpGUI;
 	private ClientController cc;
 	
-	public GUIController(ClientController cc,User user){
+	public GUIController(ClientController cc,AvailableUser user){
 		this.cc = cc;
 		this.user = user;
 		hpGUI = new HomePageGUI(this,user);
 	}
 	
-	public void setUser(User user){
+	public void setUser(AvailableUser user){
 		this.user=user;
 	}
 	
 	public void setupCategoryList(){
 		hpGUI.setUser(user);
 	}
+	
 	
 	public void createCategoryList() throws IOException{
 		setupCategoryList();
@@ -46,12 +47,20 @@ public class GUIController {
 	
 	
 	public void changeCategorylimit(String categoryName,int budgetlimit){
-		
+		cc.changeCategoryLimit(new Category(categoryName,budgetlimit,user,new LinkedList()));
+	}
+	
+	public void editUser(AvailableUser user){
+		cc.editUser(user);
 	}
 	
 	public void addTag(Tag tag){
 		tag.setUserName(user.getName());
-		cc.addTag(tag); 		//Går att använda för att uppdatera server, KASTA INTE
+		cc.addTag(tag); 		
+	}
+	
+	public void option(){
+		new OptionGUI(this,user);
 	}
 	
 	public void homePage(){

@@ -51,14 +51,14 @@ public class ClientController{
 		
 		
 	}
-	public void updateUser(AvailableUser user){
-		client.updateUser(user);
-		//Går att använda för att uppdatera server, KASTA INTE
-	}
 	
 	public void registerUser(String userName, char[] password){
 		RegisterUser rg = new RegisterUser(userName);
 		rg.setPassword(password);
+		
+		for(int i = 0 ; i<rg.getPassword().length; i++){
+			System.out.print(rg.getPassword()[i] + "1");
+		}
 		
 		
 		client.registerUser(rg);
@@ -86,6 +86,11 @@ public class ClientController{
 	
 	public void addTag(Tag tag){
 		client.addTag(tag);
+	}
+	
+	public void editUser(AvailableUser user){
+		user.setToDo(1);
+		client.editUser(user);
 	}
 	
 	

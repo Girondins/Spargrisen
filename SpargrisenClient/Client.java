@@ -115,12 +115,26 @@ public class Client{
 		
 		
 		try {
+			for(int i = 0 ; i<registerUser.getPassword().length; i++){
+				System.out.print(registerUser.getPassword()[i] + "2");
+			}
 			oos.writeObject(registerUser);
 			oos.flush();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	public void editUser(AvailableUser user){
+		try {
+			oos.writeObject(user);
+			oos.flush();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 	}
 	
 	

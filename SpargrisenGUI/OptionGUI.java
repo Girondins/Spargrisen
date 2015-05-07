@@ -6,6 +6,9 @@ import java.awt.event.ActionListener;
 
 import javax.swing.*;
 
+import SpargrisenObjekt.AvailableUser;
+import SpargrisenObjekt.User;
+
 public class OptionGUI implements ActionListener {
 	private JLabel titel = new JLabel("Options");
 	private JLabel userName = new JLabel("Change Usernamn:");
@@ -15,9 +18,9 @@ public class OptionGUI implements ActionListener {
 	private JLabel oldPassword = new JLabel("Enter old password: ");
 	private JTextField userNameTF = new JTextField("");
 	private JTextField nameTF = new JTextField("");
-	private JTextField passwordTF = new JTextField("");
-	private JTextField vPasswordTF = new JTextField("");
-	private JTextField oldPasswordTF = new JTextField("");
+	private JPasswordField passwordTF = new JPasswordField("");
+	private JPasswordField vPasswordTF = new JPasswordField("");
+	private JPasswordField oldPasswordTF = new JPasswordField("");
 	private JButton accept = new JButton("Confirm");
 	private JButton cancel = new JButton("Cancel");
 	private JPanel mainPanel = new JPanel(new GridLayout(8, 1));
@@ -32,9 +35,11 @@ public class OptionGUI implements ActionListener {
 	private Font headFont = new Font("Cooper Black", Font.PLAIN, 20);
 	private JFrame frame = new JFrame("Create new Account");
 	private GUIController GUIc;
+	private AvailableUser user;
 
-	public OptionGUI(GUIController GUIc) {
+	public OptionGUI(GUIController GUIc, AvailableUser user) {
 		this.GUIc = GUIc;
+		this.user = user;
 
 		titel.setFont(headFont);
 		userName.setFont(font);
@@ -70,7 +75,11 @@ public class OptionGUI implements ActionListener {
 		mainPanel.add(fifthPanel);
 		mainPanel.add(sixthPanel);
 		mainPanel.add(lastPanel);
-
+		
+		accept.addActionListener(this);
+		cancel.addActionListener(this);
+		
+		
 		frame.setPreferredSize(new Dimension(380, 560)); // galaxy S4 screen
 															// size
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -84,32 +93,60 @@ public class OptionGUI implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 
 		if (e.getSource() == accept) {
-			String pass, vPass, userName, name, checkPass;
+			String userName, name;
+			char[] pass, vPass, checkPass;
+			int count = 0, checkCount = 0;
 			userName = userNameTF.getText();
-			pass = passwordTF.getText();
-			vPass = vPasswordTF.getText();
+			pass = passwordTF.getPassword();
+			vPass = vPasswordTF.getPassword();
 			name = nameTF.getText();
-			checkPass = oldPasswordTF.getText();
-			
-			
-			//CHECKPASS KONTROLLE MED DATABAS IFALL LÖSEN STÄMMER: FIXA SEN
+			checkPass = oldPasswordTF.getPassword();
+			boolean check = false;
 
-			if (userName != null) {
-
-			} else if (pass != null) {
-				if (pass.equals(vPass)) {
-					// GUIc.registerUser(userName,pass);
-
-				} else {
-					JOptionPane
-							.showMessageDialog(null,
-									"The verified password does not match the desired password!");
+			if (user.getPassword().length == checkPass.length) {
+				for (int i = 0; i < checkPass.length; i++) {
+					if (user.getPassword()[i] == checkPass[i]) {
+						checkCount = checkCount + 2;
+					}
 				}
-
-			} else if (name != null) {
-
+				if (checkCount == user.getPassword().length * 2) {
+					check = true;
+				}
+			} else {
+				JOptionPane.showMessageDialog(null,
+						"You have entered wrong password");
 			}
 
+			if (check == true) {
+				if (userName != null) {
+					user.setChangeName(userName);
+				}
+				if (pass != null) {
+					if (pass.length == vPass.length) {
+						for (int i = 0; i < pass.length; i++) {
+							if (pass[i] == vPass[i]) {
+								count = count + 2;
+							}
+						}
+
+						if (count == pass.length * 2) {
+							user.setPassword(pass);
+						} else
+							JOptionPane
+									.showMessageDialog(null,
+											"The verified password does not match the desired password!");
+					} else
+						JOptionPane
+								.showMessageDialog(null,
+										"The verified password does not match the desired password!");
+				} else if (name != null) {
+					user.setFirstName(name);
+				}
+				GUIc.editUser(user);
+				JOptionPane.showMessageDialog(null, "Changed Settings Saved");
+				GUIc.homePage();
+				frame.dispose();
+			}
 		}
 		if (e.getSource() == cancel) {
 			GUIc.homePage();

@@ -11,8 +11,8 @@ public interface User {
 	public long getID();
 	public void setFirstName(String firstName);
 	public String getFirstName();
-	public void setLastName(String lastName);
-	public String getLastName();
+	public void setChangeName(String changeName);
+	public String getChangeName();
 	public void setToDo(int task);
 	public int getToDo();
 	

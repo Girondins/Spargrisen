@@ -13,31 +13,14 @@ public class InformationHandler {
 	private AvailableUser user;
 	
 	
-	//skapa en lista med category
+	//DONE
 	public AvailableUser retriveUser(AvailableUser user) throws IOException {
 		String userName;
-		CategoryList catlist;
-		Category category;
+		CategoryList catList = null;
 		userName = user.getName();
-		
-		Driver.retriveUser(userName);
-		
-		category = new category(driver)
-		
-		user.setCategoryList(catlist);
-	
-		
-		
-		
-		// JODY KOD med DATABAS HÄMTA VÄSENTLIG INFO FRÅN DATABAS OCH LAGRA I ETT USER OBJEKTET
-		// SOM SKICKAS TILLBAKA, ANVÄND SETMETODER
-		
+		user.setCategoryList(Driver.retriveUser(userName, catList));
 		return this.user;
-		
-		
 	}
-	
-	
 	
 	//DONE
 	public boolean doesUserExist(AvailableUser user) {
@@ -45,17 +28,15 @@ public class InformationHandler {
 		char[] password;
 		userName = user.getName();
 		password = user.getPassword();
-		
 		if(Driver.isUserFree(userName)==true){
-			System.out.println("User name available...");
+			System.out.println("Username is available...");
 		}else{
-			System.out.println("user name taken...");
+			System.out.println("username is taken...");
 		}
-		
 		return Driver.isUserFree(userName);
 
 	}
-	//Not DONE, bryt ner char array till String viceversa
+	//DONE
 	public AvailableUser registerUser(RegisterUser RegisterUser) throws IOException {
 		String userName;
 		char[] password;
@@ -91,7 +72,7 @@ public class InformationHandler {
 		
 		return user;
 	}
-	
+	//DONE
 	public AvailableUser changeBudgetLimit(Category category){
 		String categoryName,userName;
 		int newLimit;
@@ -99,8 +80,18 @@ public class InformationHandler {
 		userName = category.getUser();
 		newLimit = category.getBudgetLimit();
 		
-		// JODY KOD MED DATABAS DÄR MAN ÄNDRAR BUDGETLIMIT
+		Driver.changeBudgetLimit(categoryName, userName, newLimit);
 		
+		return user;
+	}
+	//DONE
+	public AvailableUser editUser(AvailableUser user){
+		String userName, changeTo;
+		char[] newPassword;
+		userName = user.getName();
+		changeTo = user.getChangeName();
+		newPassword = user.getPassword();
+		Driver.editUser(userName, changeTo, newPassword);
 		return user;
 	}
 
